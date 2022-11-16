@@ -6,9 +6,31 @@ import re
 root = tk.Tk()
 root.withdraw()
 
-print("Please select the original Sm4sh animation file, exported from Smash Forge in .smd format")
+print("Please select the original Sm4sh animation files, exported from Smash Forge in .smd or .anim format")
 
-file_orig = filedialog.askopenfilename(filetypes=[("Source Animation (.smd)", "*.smd")])
+anims = filedialog.askopenfilenames(filetypes=[("Source Animation (.smd)", "*.smd"), ("Maya Anim (.anim)", "*.anim")])
+
+if len(anims) == 0:
+    quit()
+
+filename, extension = os.path.splitext(anims[0])
+
+with open(anims[0], 'r') as anim1:
+    animRead = anim1.read()
+
+match extension:
+    case '.smd':
+        base_keyframe_data = re.findall("(ime.*\n[\S\s]*?)t", animRead)
+
+        for anim in range(1, len(anims)):
+            with open(anims[anim], 'r') as nextAnim:
+                nextAnimRead = nextAnim.read()
+
+            keyframe_data = re.findall("ime.*\n([\S\s]*?)t", nextAnimRead)
+            for time in range(len(keyframe_data)):
+                animRead = animRead.replace(base_keyframe_data[time], base_keyframe_data[time] + keyframe_data[time], 1)
+                base_keyframe_data[time] += keyframe_data[time]
+    
 
 has_LegC = input("Does your character contain a LegC bone? (Y/N): ")
 while has_LegC.lower() not in ("y", "n"):
@@ -20,1133 +42,1138 @@ while has_ClavicleC.lower() not in ("y", "n"):
     print("Not a valid input.")
     has_ClavicleC = input("Does your character contain a ClavicleC bone? (Y/N): ")
 
-filename, extension = os.path.splitext(file_orig)
-
-with open(file_orig, 'r') as fileOrig:
-    fileOrigRead = fileOrig.read()
 
 # Trans, Rot, & Hip
-if "TransN" in fileOrigRead:
+if "TransN" in animRead:
     bone = "Trans"
-    fileOrigRead = fileOrigRead.replace("TransN", bone) 
+    animRead = animRead.replace("TransN", bone) 
 
-if "XRotN" in fileOrigRead:
+if "XRotN" in animRead:
     bone = "Rot"
-    fileOrigRead = fileOrigRead.replace("RotN", bone)
+    animRead = animRead.replace("RotN", bone)
 
-if "RotN" in fileOrigRead:
+if "RotN" in animRead:
     bone = "Rot"
-    fileOrigRead = fileOrigRead.replace("RotN", bone)
+    animRead = animRead.replace("RotN", bone)
 
-if "HipN" in fileOrigRead:
+if "HipN" in animRead:
     bone = "Hip"
-    fileOrigRead = fileOrigRead.replace("HipN", bone)
+    animRead = animRead.replace("HipN", bone)
 
-if "HLP_HaraJb" in fileOrigRead:
+if "HLP_HaraJb" in animRead:
     bone = "H_Waist"
-    fileOrigRead = fileOrigRead.replace("HLP_HaraJb", bone)
+    animRead = animRead.replace("HLP_HaraJb", bone)
 
-if "ThrowN" in fileOrigRead:
+if "ThrowN" in animRead:
     bone = "Throw"
-    fileOrigRead = fileOrigRead.replace("ThrowN", bone)
+    animRead = animRead.replace("ThrowN", bone)
 
 #Left Leg
-if "HLP_LLegJc" in fileOrigRead:
+if "HLP_LLegJc" in animRead:
     bone = "LegL2"
-    fileOrigRead = fileOrigRead.replace("HLP_LLegJc", bone)
+    animRead = animRead.replace("HLP_LLegJc", bone)
 
-if "HLP_RLegJc" in fileOrigRead:
+if "HLP_RLegJc" in animRead:
     bone = "LegR2"
-    fileOrigRead = fileOrigRead.replace("HLP_RLegJc", bone)
+    animRead = animRead.replace("HLP_RLegJc", bone)
 
-if "LLegJb" in fileOrigRead:
+if "LLegJb" in animRead:
     bone = "H_LegL1"
-    fileOrigRead = fileOrigRead.replace("LLegJb", bone)
+    animRead = animRead.replace("LLegJb", bone)
 
-if "RLegJb" in fileOrigRead:
+if "RLegJb" in animRead:
     bone = "H_LegR1"
-    fileOrigRead = fileOrigRead.replace("RLegJb", bone)
+    animRead = animRead.replace("RLegJb", bone)
 
-if "LLegJ" in fileOrigRead:
+if "LLegJ" in animRead:
     bone = "LegL"
-    fileOrigRead = fileOrigRead.replace("LLegJ", bone)
+    animRead = animRead.replace("LLegJ", bone)
 
-if "LKneeJ" in fileOrigRead:
+if "LKneeJ" in animRead:
     bone = "KneeL"
-    fileOrigRead = fileOrigRead.replace("LKneeJ", bone)
+    animRead = animRead.replace("LKneeJ", bone)
 
-if "LFootJ" in fileOrigRead:
+if "LFootJ" in animRead:
     bone = "FootL"
-    fileOrigRead = fileOrigRead.replace("LFootJ", bone)
+    animRead = animRead.replace("LFootJ", bone)
 
-if "LToeN" in fileOrigRead:
+if "LToeN" in animRead:
     bone = "ToeL"
-    fileOrigRead = fileOrigRead.replace("LToeN", bone)
+    animRead = animRead.replace("LToeN", bone)
 
-if "LToe1stN" in fileOrigRead:
+if "LToe1stN" in animRead:
     bone = "ToeL2"
-    fileOrigRead = fileOrigRead.replace("LToe1stN", bone)
+    animRead = animRead.replace("LToe1stN", bone)
 
-if "LToe2ndN" in fileOrigRead:
+if "LToe2ndN" in animRead:
     bone = "ToeL3"
-    fileOrigRead = fileOrigRead.replace("LToe2ndN", bone)
+    animRead = animRead.replace("LToe2ndN", bone)
 
-if "LToe3rdN" in fileOrigRead:
+if "LToe3rdN" in animRead:
     bone = "ToeL4"
-    fileOrigRead = fileOrigRead.replace("LToe3rdN", bone)
+    animRead = animRead.replace("LToe3rdN", bone)
 
-if "HLP_LComaneciJb" in fileOrigRead:
+if "HLP_LComaneciJb" in animRead:
     bone = "H_LegL"
-    fileOrigRead = fileOrigRead.replace("HLP_LComaneciJb", bone)
+    animRead = animRead.replace("HLP_LComaneciJb", bone)
 
-if "HLP_LKneeJb" in fileOrigRead:
+if "HLP_LKneeJb" in animRead:
     bone = "H_KneeL"
-    fileOrigRead = fileOrigRead.replace("HLP_LKneeJb", bone)
+    animRead = animRead.replace("HLP_LKneeJb", bone)
 
 # Right Leg
-if "RLegJ" in fileOrigRead:
+if "RLegJ" in animRead:
     bone = "LegR"
-    fileOrigRead = fileOrigRead.replace("RLegJ", bone)
+    animRead = animRead.replace("RLegJ", bone)
 
-if "RKneeJ" in fileOrigRead:
+if "RKneeJ" in animRead:
     bone = "KneeR"
-    fileOrigRead = fileOrigRead.replace("RKneeJ", bone)
+    animRead = animRead.replace("RKneeJ", bone)
 
-if "RFootJ" in fileOrigRead:
+if "RFootJ" in animRead:
     bone = "FootR"
-    fileOrigRead = fileOrigRead.replace("RFootJ", bone)
+    animRead = animRead.replace("RFootJ", bone)
 
-if "RToeN" in fileOrigRead:
+if "RToeN" in animRead:
     bone = "ToeR"
-    fileOrigRead = fileOrigRead.replace("RToeN", bone)
+    animRead = animRead.replace("RToeN", bone)
 
-if "RToe1stN" in fileOrigRead:
+if "RToe1stN" in animRead:
     bone = "ToeR2"
-    fileOrigRead = fileOrigRead.replace("RToe1stN", bone)
+    animRead = animRead.replace("RToe1stN", bone)
 
-if "RToe2ndN" in fileOrigRead:
+if "RToe2ndN" in animRead:
     bone = "ToeR3"
-    fileOrigRead = fileOrigRead.replace("RToe2ndN", bone)
+    animRead = animRead.replace("RToe2ndN", bone)
 
-if "RToe3rdN" in fileOrigRead:
+if "RToe3rdN" in animRead:
     bone = "ToeR4"
-    fileOrigRead = fileOrigRead.replace("RToe3rdN", bone)
+    animRead = animRead.replace("RToe3rdN", bone)
 
-if "HLP_RComaneciJb" in fileOrigRead:
+if "HLP_RComaneciJb" in animRead:
     bone = "H_LegR"
-    fileOrigRead = fileOrigRead.replace("HLP_RComaneciJb", bone)
+    animRead = animRead.replace("HLP_RComaneciJb", bone)
 
-if "HLP_RKneeJb" in fileOrigRead:
+if "HLP_RKneeJb" in animRead:
     bone = "H_KneeR"
-    fileOrigRead = fileOrigRead.replace("HLP_RKneeJb", bone)
+    animRead = animRead.replace("HLP_RKneeJb", bone)
 
 # Waist & Bust
-if "WaistN" in fileOrigRead:
+if "WaistN" in animRead:
     bone = "Waist"
-    fileOrigRead = fileOrigRead.replace("WaistN", bone)
+    animRead = animRead.replace("WaistN", bone)
 
-if "BustN" in fileOrigRead:
+if "BustN" in animRead:
     bone = "Bust"
-    fileOrigRead = fileOrigRead.replace("BustN", bone)
+    animRead = animRead.replace("BustN", bone)
 
 # Left Arm
-if "LShoulderN" in fileOrigRead:
+if "LShoulderN" in animRead:
     bone = "ClavicleL"
-    fileOrigRead = fileOrigRead.replace("LShoulderN", bone)
+    animRead = animRead.replace("LShoulderN", bone)
 
-if "LShoulderJ" in fileOrigRead:
+if "LShoulderJ" in animRead:
     bone = "ShoulderL"
-    fileOrigRead = fileOrigRead.replace("LShoulderJ", bone)
+    animRead = animRead.replace("LShoulderJ", bone)
 
-if "LArmJ" in fileOrigRead:
+if "LArmJ" in animRead:
     bone = "ArmL"
-    fileOrigRead = fileOrigRead.replace("LArmJ", bone)
+    animRead = animRead.replace("LArmJ", bone)
 
-if "LHandN" in fileOrigRead:
+if "LHandN" in animRead:
     bone = "HandL"
-    fileOrigRead = fileOrigRead.replace("LHandN", bone)
+    animRead = animRead.replace("LHandN", bone)
 
-if "HLP_LElbowJb" in fileOrigRead:
+if "HLP_LElbowJb" in animRead:
     bone = "H_ElbowL"
-    fileOrigRead = fileOrigRead.replace("HLP_LElbowJb", bone)
+    animRead = animRead.replace("HLP_LElbowJb", bone)
 
-if "HLP_LTekubiJb" in fileOrigRead:
+if "HLP_LTekubiJb" in animRead:
     bone = "H_WristL"
-    fileOrigRead = fileOrigRead.replace("HLP_LTekubiJb", bone)
+    animRead = animRead.replace("HLP_LTekubiJb", bone)
 
-if "HLP_LArmTwistjb" in fileOrigRead:
+if "HLP_LArmTwistjb" in animRead:
     bone = "H_ArmtwistL"
-    fileOrigRead = fileOrigRead.replace("HLP_LArmTwistjb", bone)
+    animRead = animRead.replace("HLP_LArmTwistjb", bone)
 
-if "HLP_LSholJb" in fileOrigRead:
+if "HLP_LSholJb" in animRead:
     bone = "H_SholderL"
-    fileOrigRead = fileOrigRead.replace("HLP_LSholJb", bone)
+    animRead = animRead.replace("HLP_LSholJb", bone)
 
 # Left Hand
-if "LFingerBaseN" in fileOrigRead:
+if "LFingerBaseN" in animRead:
     bone = "FingerL10"
-    fileOrigRead = fileOrigRead.replace("LFingerBaseN", bone)
+    animRead = animRead.replace("LFingerBaseN", bone)
 
-if "LThumb1N" in fileOrigRead:
+if "LThumb1N" in animRead:
     bone = "FingerL51"
-    fileOrigRead = fileOrigRead.replace("LThumb1N", bone)
+    animRead = animRead.replace("LThumb1N", bone)
 
-if "LThumb2N" in fileOrigRead:
+if "LThumb2N" in animRead:
     bone = "FingerL52"
-    fileOrigRead = fileOrigRead.replace("LThumb2N", bone)
+    animRead = animRead.replace("LThumb2N", bone)
 
-if "LThumb3N" in fileOrigRead:
+if "LThumb3N" in animRead:
     bone = "FingerL53"
-    fileOrigRead = fileOrigRead.replace("LThumb3N", bone)
+    animRead = animRead.replace("LThumb3N", bone)
 
 # BRAWL -----------------------------------------------
-if "LThumbNa" in fileOrigRead:
+if "LThumbNa" in animRead:
     bone = "FingerL51"
-    fileOrigRead = fileOrigRead.replace("LThumbNa", bone)
+    animRead = animRead.replace("LThumbNa", bone)
 
-if "LThumbNb" in fileOrigRead:
+if "LThumbNb" in animRead:
     bone = "FingerL52"
-    fileOrigRead = fileOrigRead.replace("LThumbNb", bone)
+    animRead = animRead.replace("LThumbNb", bone)
 # BRAWL -----------------------------------------------
 
-if "LIndex1N" in fileOrigRead:
+if "LIndex1N" in animRead:
     bone = "FingerL11"
-    fileOrigRead = fileOrigRead.replace("LIndex1N", bone)
+    animRead = animRead.replace("LIndex1N", bone)
 
-if "LIndex2N" in fileOrigRead:
+if "LIndex2N" in animRead:
     bone = "FingerL12"
-    fileOrigRead = fileOrigRead.replace("LIndex2N", bone)
+    animRead = animRead.replace("LIndex2N", bone)
 
-if "LIndex3N" in fileOrigRead:
+if "LIndex3N" in animRead:
     bone = "FingerL13"
-    fileOrigRead = fileOrigRead.replace("LIndex3N", bone)
+    animRead = animRead.replace("LIndex3N", bone)
 
 # BRAWL -----------------------------------------------
-if "L1stNa" in fileOrigRead:
+if "L1stNa" in animRead:
     bone = "FingerL11"
-    fileOrigRead = fileOrigRead.replace("L1stNa", bone)
+    animRead = animRead.replace("L1stNa", bone)
 
-if "L1stNb" in fileOrigRead:
+if "L1stNb" in animRead:
     bone = "FingerL12"
-    fileOrigRead = fileOrigRead.replace("L1stNb", bone)
+    animRead = animRead.replace("L1stNb", bone)
 # BRAWL -----------------------------------------------
 
-if "LMiddleN" in fileOrigRead:
+if "LMiddleN" in animRead:
     bone = "FingerL20"
-    fileOrigRead = fileOrigRead.replace("LMiddleN", bone)
+    animRead = animRead.replace("LMiddleN", bone)
 
-if "LMiddle1N" in fileOrigRead:
+if "LMiddle1N" in animRead:
     bone = "FingerL21"
-    fileOrigRead = fileOrigRead.replace("LMiddle1N", bone)
+    animRead = animRead.replace("LMiddle1N", bone)
 
-if "LMiddle2N" in fileOrigRead:
+if "LMiddle2N" in animRead:
     bone = "FingerL22"
-    fileOrigRead = fileOrigRead.replace("LMiddle2N", bone)
+    animRead = animRead.replace("LMiddle2N", bone)
 
-if "LMiddle3N" in fileOrigRead:
+if "LMiddle3N" in animRead:
     bone = "FingerL23"
-    fileOrigRead = fileOrigRead.replace("LMiddle3N", bone)
+    animRead = animRead.replace("LMiddle3N", bone)
 
 # BRAWL -----------------------------------------------
-if "L2ndNa" in fileOrigRead:
+if "L2ndNa" in animRead:
     bone = "FingerL21"
-    fileOrigRead = fileOrigRead.replace("L2ndNa", bone)
+    animRead = animRead.replace("L2ndNa", bone)
 
-if "L2ndNb" in fileOrigRead:
+if "L2ndNb" in animRead:
     bone = "FingerL22"
-    fileOrigRead = fileOrigRead.replace("L2ndNb", bone)
+    animRead = animRead.replace("L2ndNb", bone)
 # BRAWL -----------------------------------------------
 
-if "LRingN" in fileOrigRead:
+if "LRingN" in animRead:
     bone = "FingerL30"
-    fileOrigRead = fileOrigRead.replace("LRingN", bone)
+    animRead = animRead.replace("LRingN", bone)
 
-if "LRing1N" in fileOrigRead:
+if "LRing1N" in animRead:
     bone = "FingerL31"
-    fileOrigRead = fileOrigRead.replace("LRing1N", bone)
+    animRead = animRead.replace("LRing1N", bone)
 
-if "LRing2N" in fileOrigRead:
+if "LRing2N" in animRead:
     bone = "FingerL32"
-    fileOrigRead = fileOrigRead.replace("LRing2N", bone)
+    animRead = animRead.replace("LRing2N", bone)
 
-if "LRing3N" in fileOrigRead:
+if "LRing3N" in animRead:
     bone = "FingerL33"
-    fileOrigRead = fileOrigRead.replace("LRing3N", bone)
+    animRead = animRead.replace("LRing3N", bone)
 
 # BRAWL -----------------------------------------------
-if "L3rdNa" in fileOrigRead:
+if "L3rdNa" in animRead:
     bone = "FingerL31"
-    fileOrigRead = fileOrigRead.replace("L3rdNa", bone)
+    animRead = animRead.replace("L3rdNa", bone)
 
-if "L3rdNb" in fileOrigRead:
+if "L3rdNb" in animRead:
     bone = "FingerL32"
-    fileOrigRead = fileOrigRead.replace("L3rdNb", bone)
+    animRead = animRead.replace("L3rdNb", bone)
 # BRAWL -----------------------------------------------
 
-if "LPinkyN" in fileOrigRead:
+if "LPinkyN" in animRead:
     bone = "FingerL40"
-    fileOrigRead = fileOrigRead.replace("LPinkyN", bone)
+    animRead = animRead.replace("LPinkyN", bone)
 
-if "LPinky1N" in fileOrigRead:
+if "LPinky1N" in animRead:
     bone = "FingerL41"
-    fileOrigRead = fileOrigRead.replace("LPinky1N", bone)
+    animRead = animRead.replace("LPinky1N", bone)
 
-if "LPinky2N" in fileOrigRead:
+if "LPinky2N" in animRead:
     bone = "FingerL42"
-    fileOrigRead = fileOrigRead.replace("LPinky2N", bone)
+    animRead = animRead.replace("LPinky2N", bone)
 
-if "LPinky3N" in fileOrigRead:
+if "LPinky3N" in animRead:
     bone = "FingerL43"
-    fileOrigRead = fileOrigRead.replace("LPinky3N", bone)
+    animRead = animRead.replace("LPinky3N", bone)
 
 # BRAWL -----------------------------------------------
-if "L4thNa" in fileOrigRead:
+if "L4thNa" in animRead:
     bone = "FingerL41"
-    fileOrigRead = fileOrigRead.replace("L4thNa", bone)
+    animRead = animRead.replace("L4thNa", bone)
 
-if "L4thNb" in fileOrigRead:
+if "L4thNb" in animRead:
     bone = "FingerL42"
-    fileOrigRead = fileOrigRead.replace("L4thNb", bone)
+    animRead = animRead.replace("L4thNb", bone)
 # BRAWL -----------------------------------------------
 
 # Right Arm
-if "RShoulderN" in fileOrigRead:
+if "RShoulderN" in animRead:
     bone = "ClavicleR"
-    fileOrigRead = fileOrigRead.replace("RShoulderN", bone)
+    animRead = animRead.replace("RShoulderN", bone)
 
-if "RShoulderJ" in fileOrigRead:
+if "RShoulderJ" in animRead:
     bone = "ShoulderR"
-    fileOrigRead = fileOrigRead.replace("RShoulderJ", bone)
+    animRead = animRead.replace("RShoulderJ", bone)
 
-if "RArmJ" in fileOrigRead:
+if "RArmJ" in animRead:
     bone = "ArmR"
-    fileOrigRead = fileOrigRead.replace("RArmJ", bone)
+    animRead = animRead.replace("RArmJ", bone)
 
-if "RHandN" in fileOrigRead:
+if "RHandN" in animRead:
     bone = "HandR"
-    fileOrigRead = fileOrigRead.replace("RHandN", bone)
+    animRead = animRead.replace("RHandN", bone)
 
-if "HLP_RElbowJb" in fileOrigRead:
+if "HLP_RElbowJb" in animRead:
     bone = "H_ElbowR"
-    fileOrigRead = fileOrigRead.replace("HLP_RElbowJb", bone)
+    animRead = animRead.replace("HLP_RElbowJb", bone)
 
-if "HLP_RTekubiJb" in fileOrigRead:
+if "HLP_RTekubiJb" in animRead:
     bone = "H_WristR"
-    fileOrigRead = fileOrigRead.replace("HLP_RTekubiJb", bone)
+    animRead = animRead.replace("HLP_RTekubiJb", bone)
 
-if "HLP_RArmTwistJb" in fileOrigRead:
+if "HLP_RArmTwistJb" in animRead:
     bone = "H_ArmtwistR"
-    fileOrigRead = fileOrigRead.replace("HLP_RArmTwistJb", bone)
+    animRead = animRead.replace("HLP_RArmTwistJb", bone)
 
-if "HLP_RSholJb" in fileOrigRead:
+if "HLP_RSholJb" in animRead:
     bone = "H_SholderR"
-    fileOrigRead = fileOrigRead.replace("HLP_RSholJb", bone)
+    animRead = animRead.replace("HLP_RSholJb", bone)
 
 # Right Hand
-if "RFingerBaseN" in fileOrigRead:
+if "RFingerBaseN" in animRead:
     bone = "FingerR10"
-    fileOrigRead = fileOrigRead.replace("RFingerBaseN", bone)
+    animRead = animRead.replace("RFingerBaseN", bone)
 
-if "RThumb1N" in fileOrigRead:
+if "RThumb1N" in animRead:
     bone = "FingerR51"
-    fileOrigRead = fileOrigRead.replace("RThumb1N", bone)
+    animRead = animRead.replace("RThumb1N", bone)
 
-if "RThumb2N" in fileOrigRead:
+if "RThumb2N" in animRead:
     bone = "FingerR52"
-    fileOrigRead = fileOrigRead.replace("RThumb2N", bone)
+    animRead = animRead.replace("RThumb2N", bone)
 
-if "RThumb3N" in fileOrigRead:
+if "RThumb3N" in animRead:
     bone = "FingerR53"
-    fileOrigRead = fileOrigRead.replace("RThumb3N", bone)
+    animRead = animRead.replace("RThumb3N", bone)
 
 # BRAWL -----------------------------------------------
-if "RThumbNa" in fileOrigRead:
+if "RThumbNa" in animRead:
     bone = "FingerR51"
-    fileOrigRead = fileOrigRead.replace("RThumbNa", bone)
+    animRead = animRead.replace("RThumbNa", bone)
 
-if "RThumbNb" in fileOrigRead:
+if "RThumbNb" in animRead:
     bone = "FingerR52"
-    fileOrigRead = fileOrigRead.replace("RThumbNb", bone)
+    animRead = animRead.replace("RThumbNb", bone)
 # BRAWL -----------------------------------------------
 
-if "RIndex1N" in fileOrigRead:
+if "RIndex1N" in animRead:
     bone = "FingerR11"
-    fileOrigRead = fileOrigRead.replace("RIndex1N", bone)
+    animRead = animRead.replace("RIndex1N", bone)
 
-if "RIndex2N" in fileOrigRead:
+if "RIndex2N" in animRead:
     bone = "FingerR12"
-    fileOrigRead = fileOrigRead.replace("RIndex2N", bone)
+    animRead = animRead.replace("RIndex2N", bone)
 
-if "RIndex3N" in fileOrigRead:
+if "RIndex3N" in animRead:
     bone = "FingerR13"
-    fileOrigRead = fileOrigRead.replace("RIndex3N", bone)
+    animRead = animRead.replace("RIndex3N", bone)
 
 # BRAWL -----------------------------------------------
-if "R1stNa" in fileOrigRead:
+if "R1stNa" in animRead:
     bone = "FingerR11"
-    fileOrigRead = fileOrigRead.replace("R1stNa", bone)
+    animRead = animRead.replace("R1stNa", bone)
 
-if "R1stNb" in fileOrigRead:
+if "R1stNb" in animRead:
     bone = "FingerR12"
-    fileOrigRead = fileOrigRead.replace("R1stNb", bone)
+    animRead = animRead.replace("R1stNb", bone)
 # BRAWL -----------------------------------------------
 
-if "RMiddleN" in fileOrigRead:
+if "RMiddleN" in animRead:
     bone = "FingerR20"
-    fileOrigRead = fileOrigRead.replace("RMiddleN", bone)
+    animRead = animRead.replace("RMiddleN", bone)
 
-if "RMiddle1N" in fileOrigRead:
+if "RMiddle1N" in animRead:
     bone = "FingerR21"
-    fileOrigRead = fileOrigRead.replace("RMiddle1N", bone)
+    animRead = animRead.replace("RMiddle1N", bone)
 
-if "RMiddle2N" in fileOrigRead:
+if "RMiddle2N" in animRead:
     bone = "FingerR22"
-    fileOrigRead = fileOrigRead.replace("RMiddle2N", bone)
+    animRead = animRead.replace("RMiddle2N", bone)
 
-if "RMiddle3N" in fileOrigRead:
+if "RMiddle3N" in animRead:
     bone = "FingerR23"
-    fileOrigRead = fileOrigRead.replace("RMiddle3N", bone)
+    animRead = animRead.replace("RMiddle3N", bone)
 
 # BRAWL -----------------------------------------------
-if "R2ndNa" in fileOrigRead:
+if "R2ndNa" in animRead:
     bone = "FingerR21"
-    fileOrigRead = fileOrigRead.replace("R2ndNa", bone)
+    animRead = animRead.replace("R2ndNa", bone)
 
-if "R2ndNb" in fileOrigRead:
+if "R2ndNb" in animRead:
     bone = "FingerR22"
-    fileOrigRead = fileOrigRead.replace("R2ndNb", bone)
+    animRead = animRead.replace("R2ndNb", bone)
 # BRAWL -----------------------------------------------
 
-if "RRingN" in fileOrigRead:
+if "RRingN" in animRead:
     bone = "FingerR30"
-    fileOrigRead = fileOrigRead.replace("RRingN", bone)
+    animRead = animRead.replace("RRingN", bone)
 
-if "RRing1N" in fileOrigRead:
+if "RRing1N" in animRead:
     bone = "FingerR31"
-    fileOrigRead = fileOrigRead.replace("RRing1N", bone)
+    animRead = animRead.replace("RRing1N", bone)
 
-if "RRing2N" in fileOrigRead:
+if "RRing2N" in animRead:
     bone = "FingerR32"
-    fileOrigRead = fileOrigRead.replace("RRing2N", bone)
+    animRead = animRead.replace("RRing2N", bone)
 
-if "RRing3N" in fileOrigRead:
+if "RRing3N" in animRead:
     bone = "FingerR33"
-    fileOrigRead = fileOrigRead.replace("RRing3N", bone)
+    animRead = animRead.replace("RRing3N", bone)
 
 # BRAWL -----------------------------------------------
-if "R3rdNa" in fileOrigRead:
+if "R3rdNa" in animRead:
     bone = "FingerR31"
-    fileOrigRead = fileOrigRead.replace("R3rdNa", bone)
+    animRead = animRead.replace("R3rdNa", bone)
 
-if "R3rdNb" in fileOrigRead:
+if "R3rdNb" in animRead:
     bone = "FingerR32"
-    fileOrigRead = fileOrigRead.replace("R3rdNb", bone)
+    animRead = animRead.replace("R3rdNb", bone)
 # BRAWL -----------------------------------------------
 
-if "RPinkyN" in fileOrigRead:
+if "RPinkyN" in animRead:
     bone = "FingerR40"
-    fileOrigRead = fileOrigRead.replace("RPinkyN", bone)
+    animRead = animRead.replace("RPinkyN", bone)
 
-if "RPinky1N" in fileOrigRead:
+if "RPinky1N" in animRead:
     bone = "FingerR41"
-    fileOrigRead = fileOrigRead.replace("RPinky1N", bone)
+    animRead = animRead.replace("RPinky1N", bone)
 
-if "RPinky2N" in fileOrigRead:
+if "RPinky2N" in animRead:
     bone = "FingerR42"
-    fileOrigRead = fileOrigRead.replace("RPinky2N", bone)
+    animRead = animRead.replace("RPinky2N", bone)
 
-if "RPinky3N" in fileOrigRead:
+if "RPinky3N" in animRead:
     bone = "FingerR43"
-    fileOrigRead = fileOrigRead.replace("RPinky3N", bone)
+    animRead = animRead.replace("RPinky3N", bone)
 
 # BRAWL -----------------------------------------------
-if "R4thNa" in fileOrigRead:
+if "R4thNa" in animRead:
     bone = "FingerR41"
-    fileOrigRead = fileOrigRead.replace("R4thNa", bone)
+    animRead = animRead.replace("R4thNa", bone)
 
-if "R4thNb" in fileOrigRead:
+if "R4thNb" in animRead:
     bone = "FingerR42"
-    fileOrigRead = fileOrigRead.replace("R4thNb", bone)
+    animRead = animRead.replace("R4thNb", bone)
 # BRAWL -----------------------------------------------
 
 # Face
-if "FaceN" in fileOrigRead:
+if "FaceN" in animRead:
     bone = "Face"
-    fileOrigRead = fileOrigRead.replace("FaceN", bone)
+    animRead = animRead.replace("FaceN", bone)
 
-if "FaceLEyebrowInnerN" in fileOrigRead:
+if "FaceLEyebrowInnerN" in animRead:
     bone = "BrowL1_offset"
-    fileOrigRead = fileOrigRead.replace("FaceLEyebrowInnerN", bone)
+    animRead = animRead.replace("FaceLEyebrowInnerN", bone)
 
-if "FaceLEyebrowMidN" in fileOrigRead:
+if "FaceLEyebrowMidN" in animRead:
     bone = "BrowL2_offset"
-    fileOrigRead = fileOrigRead.replace("FaceLEyebrowMidN", bone)
+    animRead = animRead.replace("FaceLEyebrowMidN", bone)
 
-if "FaceLEyebrowOuterN" in fileOrigRead:
+if "FaceLEyebrowOuterN" in animRead:
     bone = "BrowL3_offset"
-    fileOrigRead = fileOrigRead.replace("FaceLEyebrowOuterN", bone)
+    animRead = animRead.replace("FaceLEyebrowOuterN", bone)
 
-if "FaceREyebrowInnerN" in fileOrigRead:
+if "FaceREyebrowInnerN" in animRead:
     bone = "BrowR1_offset"
-    fileOrigRead = fileOrigRead.replace("FaceREyebrowInnerN", bone)
+    animRead = animRead.replace("FaceREyebrowInnerN", bone)
 
-if "FaceREyebrowMidN" in fileOrigRead:
+if "FaceREyebrowMidN" in animRead:
     bone = "BrowR2_offset"
-    fileOrigRead = fileOrigRead.replace("FaceREyebrowMidN", bone)
+    animRead = animRead.replace("FaceREyebrowMidN", bone)
 
-if "FaceREyebrowOuterN" in fileOrigRead:
+if "FaceREyebrowOuterN" in animRead:
     bone = "BrowR3_offset"
-    fileOrigRead = fileOrigRead.replace("FaceREyebrowOuterN", bone)
+    animRead = animRead.replace("FaceREyebrowOuterN", bone)
 
-if "Mouth3N" in fileOrigRead:
+if "Mouth3N" in animRead:
     bone = "Mouth2"
-    fileOrigRead = fileOrigRead.replace("Mouth3N", bone)
+    animRead = animRead.replace("Mouth3N", bone)
 
-if "Mouth4N" in fileOrigRead:
+if "Mouth4N" in animRead:
     bone = "Mouth1"
-    fileOrigRead = fileOrigRead.replace("Mouth4N", bone)
+    animRead = animRead.replace("Mouth4N", bone)
 
-if "HairN" in fileOrigRead:
+if "HairN" in animRead:
     bone = "Hair"
-    fileOrigRead = fileOrigRead.replace("HairN", bone)
+    animRead = animRead.replace("HairN", bone)
 
-if "LHornN" in fileOrigRead:
+if "LHornN" in animRead:
     bone = "HornL"
-    fileOrigRead = fileOrigRead.replace("LHornN", bone)
+    animRead = animRead.replace("LHornN", bone)
 
-if "RHornN" in fileOrigRead:
+if "RHornN" in animRead:
     bone = "HornR"
-    fileOrigRead = fileOrigRead.replace("RHornN", bone)
+    animRead = animRead.replace("RHornN", bone)
 
-if "NoseN" in fileOrigRead:
+if "NoseN" in animRead:
     bone = "Snout"
-    fileOrigRead = fileOrigRead.replace("NoseN", bone)
+    animRead = animRead.replace("NoseN", bone)
 
 # Mouth Upper
-if "FaceCLipUpperN" in fileOrigRead:
+if "FaceCLipUpperN" in animRead:
     bone = "UplipC_offset"
-    fileOrigRead = fileOrigRead.replace("FaceCLipUpperN", bone)
+    animRead = animRead.replace("FaceCLipUpperN", bone)
 
-if "FaceLLipUpperN" in fileOrigRead:
+if "FaceLLipUpperN" in animRead:
     bone = "UplipL1_offset"
-    fileOrigRead = fileOrigRead.replace("FaceLLipUpperN", bone)
+    animRead = animRead.replace("FaceLLipUpperN", bone)
 
-if "FaceLLipCornerN" in fileOrigRead:
+if "FaceLLipCornerN" in animRead:
     bone = "UplipL2_offset"
-    fileOrigRead = fileOrigRead.replace("FaceLLipCornerN", bone)
+    animRead = animRead.replace("FaceLLipCornerN", bone)
 
-if "FaceRLipUpperN" in fileOrigRead:
+if "FaceRLipUpperN" in animRead:
     bone = "UplipR1_offset"
-    fileOrigRead = fileOrigRead.replace("FaceRLipUpperN", bone)
+    animRead = animRead.replace("FaceRLipUpperN", bone)
 
-if "FaceRLipCornerN" in fileOrigRead:
+if "FaceRLipCornerN" in animRead:
     bone = "UplipR2_offset"
-    fileOrigRead = fileOrigRead.replace("FaceRLipCornerN", bone)
+    animRead = animRead.replace("FaceRLipCornerN", bone)
 
 # Mouth Lower
-if "FaceJawN" in fileOrigRead:
+if "FaceJawN" in animRead:
     bone = "Jaw_offset"
-    fileOrigRead = fileOrigRead.replace("FaceJawN", bone)
+    animRead = animRead.replace("FaceJawN", bone)
 
-if "FaceCLipLowerN" in fileOrigRead:
+if "FaceCLipLowerN" in animRead:
     bone = "DownlipC_offset"
-    fileOrigRead = fileOrigRead.replace("FaceCLipLowerN", bone)
+    animRead = animRead.replace("FaceCLipLowerN", bone)
 
-if "FaceLLipLowerN" in fileOrigRead:
+if "FaceLLipLowerN" in animRead:
     bone = "DownlipL_offset"
-    fileOrigRead = fileOrigRead.replace("FaceLLipLowerN", bone)
+    animRead = animRead.replace("FaceLLipLowerN", bone)
 
-if "FaceRLipLowerN" in fileOrigRead:
+if "FaceRLipLowerN" in animRead:
     bone = "DownlipR_offset"
-    fileOrigRead = fileOrigRead.replace("FaceRLipLowerN", bone)
+    animRead = animRead.replace("FaceRLipLowerN", bone)
 
-if "FaceTongueN" in fileOrigRead:
+if "FaceTongueN" in animRead:
     bone = "Tongue_offset"
-    fileOrigRead = fileOrigRead.replace("FaceTongueN", bone)
+    animRead = animRead.replace("FaceTongueN", bone)
 
 # Other HLP
-if "HLP_LSakotsuJb" in fileOrigRead:
+if "HLP_LSakotsuJb" in animRead:
     bone = "H_ClavicleL"
-    fileOrigRead = fileOrigRead.replace("HLP_LSakotsuJb", bone)
+    animRead = animRead.replace("HLP_LSakotsuJb", bone)
 
-if "HLP_RSakotsuJb" in fileOrigRead:
+if "HLP_RSakotsuJb" in animRead:
     bone = "H_ClavicleR"
-    fileOrigRead = fileOrigRead.replace("HLP_RSakotsuJb", bone)
+    animRead = animRead.replace("HLP_RSakotsuJb", bone)
 
-if "HLP_LComaneciJb" in fileOrigRead:
+if "HLP_LComaneciJb" in animRead:
     bone = "H_LegL"
-    fileOrigRead = fileOrigRead.replace("HLP_LComaneciJb", bone)
+    animRead = animRead.replace("HLP_LComaneciJb", bone)
 
-if "HLP_LComaneciJc" in fileOrigRead:
+if "HLP_LComaneciJc" in animRead:
     bone = "H_LegL"
-    fileOrigRead = fileOrigRead.replace("HLP_LComaneciJc", bone)
+    animRead = animRead.replace("HLP_LComaneciJc", bone)
 
-if "HLP_LComaneciJc1" in fileOrigRead:
+if "HLP_LComaneciJc1" in animRead:
     bone = "H_LegL2"
-    fileOrigRead = fileOrigRead.replace("HLP_LComaneciJc1", bone)
+    animRead = animRead.replace("HLP_LComaneciJc1", bone)
 
-if "HLP_RComaneciJb" in fileOrigRead:
+if "HLP_RComaneciJb" in animRead:
     bone = "H_LegR"
-    fileOrigRead = fileOrigRead.replace("HLP_RComaneciJb", bone)
+    animRead = animRead.replace("HLP_RComaneciJb", bone)
 
-if "HLP_RComaneciJc" in fileOrigRead:
+if "HLP_RComaneciJc" in animRead:
     bone = "H_LegR"
-    fileOrigRead = fileOrigRead.replace("HLP_RComaneciJc", bone)
+    animRead = animRead.replace("HLP_RComaneciJc", bone)
 
 # Swing Bones
-if "SWG_Scarf0__swing" in fileOrigRead:
+if "SWG_Scarf0__swing" in animRead:
     bone = "S_Scarf1"
-    fileOrigRead = fileOrigRead.replace("SWG_Scarf0__swing", bone)
+    animRead = animRead.replace("SWG_Scarf0__swing", bone)
 
-if "SWG_Scarf1__swing" in fileOrigRead:
+if "SWG_Scarf1__swing" in animRead:
     bone = "S_Scarf2"
-    fileOrigRead = fileOrigRead.replace("SWG_Scarf1__swing", bone)
+    animRead = animRead.replace("SWG_Scarf1__swing", bone)
 
-if "SWG_Scarf2__swing" in fileOrigRead:
+if "SWG_Scarf2__swing" in animRead:
     bone = "S_Scarf3"
-    fileOrigRead = fileOrigRead.replace("SWG_Scarf2__swing", bone)
+    animRead = animRead.replace("SWG_Scarf2__swing", bone)
 
-if "SWG_cap1__swing" in fileOrigRead:
+if "SWG_cap1__swing" in animRead:
     bone = "S_Hat1"
-    fileOrigRead = fileOrigRead.replace("SWG_cap1__swing", bone)
+    animRead = animRead.replace("SWG_cap1__swing", bone)
 
-if "SWG_cap2__swing" in fileOrigRead:
+if "SWG_cap2__swing" in animRead:
     bone = "S_Hat2"
-    fileOrigRead = fileOrigRead.replace("SWG_cap2__swing", bone)
+    animRead = animRead.replace("SWG_cap2__swing", bone)
 
-if "SWG_sodeLa01__swing" in fileOrigRead:
+if "SWG_sodeLa01__swing" in animRead:
     bone = "S_SleeveFL1"
-    fileOrigRead = fileOrigRead.replace("SWG_sodeLa01__swing", bone)
+    animRead = animRead.replace("SWG_sodeLa01__swing", bone)
 
-if "SWG_sodeRa01__swing" in fileOrigRead:
+if "SWG_sodeRa01__swing" in animRead:
     bone = "S_SleeveFR1"
-    fileOrigRead = fileOrigRead.replace("SWG_sodeRa01__swing", bone)
+    animRead = animRead.replace("SWG_sodeRa01__swing", bone)
 
-if "SWG_BHem0__swing" in fileOrigRead:
+if "SWG_BHem0__swing" in animRead:
     bone = "S_ShirttailB1"
-    fileOrigRead = fileOrigRead.replace("SWG_BHem0__swing", bone)
+    animRead = animRead.replace("SWG_BHem0__swing", bone)
 
-if "SWG_FHem1__swing" in fileOrigRead:
+if "SWG_FHem1__swing" in animRead:
     bone = "S_ShirttailF1"
-    fileOrigRead = fileOrigRead.replace("SWG_FHem1__swing", bone)
+    animRead = animRead.replace("SWG_FHem1__swing", bone)
 
-if "SWG_LBHem0__swing" in fileOrigRead:
+if "SWG_LBHem0__swing" in animRead:
     bone = "S_ShirttailBL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LBHem0__swing", bone)
+    animRead = animRead.replace("SWG_LBHem0__swing", bone)
 
-if "SWG_LFHem1__swing" in fileOrigRead:
+if "SWG_LFHem1__swing" in animRead:
     bone = "S_ShirttailFL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LFHem1__swing", bone)
+    animRead = animRead.replace("SWG_LFHem1__swing", bone)
 
-if "SWG_LSHem1__swing" in fileOrigRead:
+if "SWG_LSHem1__swing" in animRead:
     bone = "S_ShirttailL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LSHem1__swing", bone)
+    animRead = animRead.replace("SWG_LSHem1__swing", bone)
 
-if "SWG_RBHem0__swing" in fileOrigRead:
+if "SWG_RBHem0__swing" in animRead:
     bone = "S_ShirttailBR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RBHem0__swing", bone)
+    animRead = animRead.replace("SWG_RBHem0__swing", bone)
 
-if "SWG_RFHem1__swing" in fileOrigRead:
+if "SWG_RFHem1__swing" in animRead:
     bone = "S_ShirttailFR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RFHem1__swing", bone)
+    animRead = animRead.replace("SWG_RFHem1__swing", bone)
 
-if "SWG_RSHem1__swing" in fileOrigRead:
+if "SWG_RSHem1__swing" in animRead:
     bone = "S_ShirttailR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RSHem1__swing", bone)
+    animRead = animRead.replace("SWG_RSHem1__swing", bone)
 
-if "SWG_LFinN__swing" in fileOrigRead:
+if "SWG_LFinN__swing" in animRead:
     bone = "S_FinL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LFinN__swing", bone)
+    animRead = animRead.replace("SWG_LFinN__swing", bone)
 
-if "SWG_RFinN__swing" in fileOrigRead:
+if "SWG_RFinN__swing" in animRead:
     bone = "S_FinR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RFinN__swing", bone)
+    animRead = animRead.replace("SWG_RFinN__swing", bone)
 
-if "SWG_TailN__swing" in fileOrigRead:
+if "SWG_TailN__swing" in animRead:
     bone = "S_Tail1"
-    fileOrigRead = fileOrigRead.replace("SWG_TailN__swing", bone)
+    animRead = animRead.replace("SWG_TailN__swing", bone)
 
-if "SWG_LBStingNa__swing" in fileOrigRead:
+if "SWG_LBStingNa__swing" in animRead:
     bone = "StingL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LBStingNa__swing", bone)
+    animRead = animRead.replace("SWG_LBStingNa__swing", bone)
 
-if "SWG_LBStingNb_swing" in fileOrigRead:
+if "SWG_LBStingNb_swing" in animRead:
     bone = "StingL2"
-    fileOrigRead = fileOrigRead.replace("SWG_LBStingNb__swing", bone)
+    animRead = animRead.replace("SWG_LBStingNb__swing", bone)
 
-if "SWG_RBStingNa__swing" in fileOrigRead:
+if "SWG_RBStingNa__swing" in animRead:
     bone = "StingR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RBStingNa__swing", bone)
+    animRead = animRead.replace("SWG_RBStingNa__swing", bone)
 
-if "SWG_RBStingNb_swing" in fileOrigRead:
+if "SWG_RBStingNb_swing" in animRead:
     bone = "StingR2"
-    fileOrigRead = fileOrigRead.replace("SWG_RBStingNb__swing", bone)
+    animRead = animRead.replace("SWG_RBStingNb__swing", bone)
 
-if "SWG_DStingNa__swing" in fileOrigRead:
+if "SWG_DStingNa__swing" in animRead:
     bone = "S_StingD1"
-    fileOrigRead = fileOrigRead.replace("SWG_DStingNa__swing", bone)
+    animRead = animRead.replace("SWG_DStingNa__swing", bone)
 
-if "SWG_DStingNb_swing" in fileOrigRead:
+if "SWG_DStingNb_swing" in animRead:
     bone = "S_StingD2"
-    fileOrigRead = fileOrigRead.replace("SWG_DStingNb__swing", bone)
+    animRead = animRead.replace("SWG_DStingNb__swing", bone)
 
-if "SWG_UStingNa__swing" in fileOrigRead:
+if "SWG_UStingNa__swing" in animRead:
     bone = "S_StingU1"
-    fileOrigRead = fileOrigRead.replace("SWG_UStingNa__swing", bone)
+    animRead = animRead.replace("SWG_UStingNa__swing", bone)
 
-if "SWG_UStingNb_swing" in fileOrigRead:
+if "SWG_UStingNb_swing" in animRead:
     bone = "S_StingU2"
-    fileOrigRead = fileOrigRead.replace("SWG_UStingNb__swing", bone)
+    animRead = animRead.replace("SWG_UStingNb__swing", bone)
 
-if "SWG_UStingNc__swing" in fileOrigRead:
+if "SWG_UStingNc__swing" in animRead:
     bone = "S_StingU3"
-    fileOrigRead = fileOrigRead.replace("SWG_UStingNc__swing", bone)
+    animRead = animRead.replace("SWG_UStingNc__swing", bone)
 
-if "SWG_LAStingNa__swing" in fileOrigRead:
+if "SWG_LAStingNa__swing" in animRead:
     bone = "S_StingBL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LAStingNa__swing", bone)
+    animRead = animRead.replace("SWG_LAStingNa__swing", bone)
 
-if "SWG_LAStingNb__swing" in fileOrigRead:
+if "SWG_LAStingNb__swing" in animRead:
     bone = "S_StingBL2"
-    fileOrigRead = fileOrigRead.replace("SWG_LAStingNb__swing", bone)
+    animRead = animRead.replace("SWG_LAStingNb__swing", bone)
 
-if "SWG_RAStingNa__swing" in fileOrigRead:
+if "SWG_RAStingNa__swing" in animRead:
     bone = "S_StingBR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RAStingNa__swing", bone)
+    animRead = animRead.replace("SWG_RAStingNa__swing", bone)
 
-if "SWG_RAStingNb__swing" in fileOrigRead:
+if "SWG_RAStingNb__swing" in animRead:
     bone = "S_StingBR2"
-    fileOrigRead = fileOrigRead.replace("SWG_RAStingNb__swing", bone)
+    animRead = animRead.replace("SWG_RAStingNb__swing", bone)
 
-if "SWG_HairA1__swing" in fileOrigRead:
+if "SWG_HairA1__swing" in animRead:
     bone = "S_HairF1"
-    fileOrigRead = fileOrigRead.replace("SWG_HairA1__swing", bone)
+    animRead = animRead.replace("SWG_HairA1__swing", bone)
 
-if "SWG_HairB1__swing" in fileOrigRead:
+if "SWG_HairB1__swing" in animRead:
     bone = "S_HairFR1"
-    fileOrigRead = fileOrigRead.replace("SWG_HairB1__swing", bone)
+    animRead = animRead.replace("SWG_HairB1__swing", bone)
 
-if "SWG_HairC1__swing" in fileOrigRead:
+if "SWG_HairC1__swing" in animRead:
     bone = "S_HairFL1"
-    fileOrigRead = fileOrigRead.replace("SWG_HairC1__swing", bone)
+    animRead = animRead.replace("SWG_HairC1__swing", bone)
 
-if "SWG_HairD1__swing" in fileOrigRead:
+if "SWG_HairD1__swing" in animRead:
     bone = "S_HairBR1"
-    fileOrigRead = fileOrigRead.replace("SWG_HairD1__swing", bone)
+    animRead = animRead.replace("SWG_HairD1__swing", bone)
 
-if "SWG_HairE1__swing" in fileOrigRead:
+if "SWG_HairE1__swing" in animRead:
     bone = "S_HairBL1"
-    fileOrigRead = fileOrigRead.replace("SWG_HairE1__swing", bone)
+    animRead = animRead.replace("SWG_HairE1__swing", bone)
 
-if "SWG_LMant0__swing" in fileOrigRead:
+if "SWG_LMant0__swing" in animRead:
     bone = "S_MantleL1"
-    # fileOrigRead = fileOrigRead.replace("SWG_LMant0__swing", bone)
+    # animRead = animRead.replace("SWG_LMant0__swing", bone)
 
-if "SWG_LMant1__swing" in fileOrigRead:
+if "SWG_LMant1__swing" in animRead:
     bone = "S_MantleL2"
-    fileOrigRead = fileOrigRead.replace("SWG_LMant1__swing", bone)
+    animRead = animRead.replace("SWG_LMant1__swing", bone)
 
-if "SWG_LMant2__swing" in fileOrigRead:
+if "SWG_LMant2__swing" in animRead:
     bone = "S_MantleL3"
-    fileOrigRead = fileOrigRead.replace("SWG_LMant2__swing", bone)
+    animRead = animRead.replace("SWG_LMant2__swing", bone)
 
-if "SWG_LMant3__swing" in fileOrigRead:
+if "SWG_LMant3__swing" in animRead:
     bone = "S_MantleL4"
-    fileOrigRead = fileOrigRead.replace("SWG_LMant3__swing", bone)
+    animRead = animRead.replace("SWG_LMant3__swing", bone)
 
-if "SWG_RMant0__swing" in fileOrigRead:
+if "SWG_RMant0__swing" in animRead:
     bone = "S_MantleR1"
-    # fileOrigRead = fileOrigRead.replace("SWG_RMant0__swing", bone)
+    # animRead = animRead.replace("SWG_RMant0__swing", bone)
 
-if "SWG_RMant1__swing" in fileOrigRead:
+if "SWG_RMant1__swing" in animRead:
     bone = "S_MantleR2"
-    fileOrigRead = fileOrigRead.replace("SWG_RMant1__swing", bone)
+    animRead = animRead.replace("SWG_RMant1__swing", bone)
 
-if "SWG_RMant2__swing" in fileOrigRead:
+if "SWG_RMant2__swing" in animRead:
     bone = "S_MantleR3"
-    fileOrigRead = fileOrigRead.replace("SWG_RMant2__swing", bone)
+    animRead = animRead.replace("SWG_RMant2__swing", bone)
 
-if "SWG_RMant3__swing" in fileOrigRead:
+if "SWG_RMant3__swing" in animRead:
     bone = "S_MantleR4"
-    fileOrigRead = fileOrigRead.replace("SWG_RMant3__swing", bone)
+    animRead = animRead.replace("SWG_RMant3__swing", bone)
 
-if "SWG_CMant0__swing" in fileOrigRead:
+if "SWG_CMant0__swing" in animRead:
     bone = "S_MantleC1"
-    fileOrigRead = fileOrigRead.replace("SWG_CMant0__swing", bone)
+    animRead = animRead.replace("SWG_CMant0__swing", bone)
 
-if "SWG_CMant1__swing" in fileOrigRead:
+if "SWG_CMant1__swing" in animRead:
     bone = "S_MantleC2"
-    fileOrigRead = fileOrigRead.replace("SWG_CMant1__swing", bone)
+    animRead = animRead.replace("SWG_CMant1__swing", bone)
 
-if "SWG_CMant2__swing" in fileOrigRead:
+if "SWG_CMant2__swing" in animRead:
     bone = "S_MantleC3"
-    fileOrigRead = fileOrigRead.replace("SWG_CMant2__swing", bone)
+    animRead = animRead.replace("SWG_CMant2__swing", bone)
 
-if "SWG_CMant3__swing" in fileOrigRead:
+if "SWG_CMant3__swing" in animRead:
     bone = "S_MantleC4"
-    fileOrigRead = fileOrigRead.replace("SWG_CMant3__swing", bone)
+    animRead = animRead.replace("SWG_CMant3__swing", bone)
 
-if "SWG_LFLeg0__swing" in fileOrigRead:
+if "SWG_LFLeg0__swing" in animRead:
     bone = "S_ShirttailFL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LFLeg0__swing", bone)
+    animRead = animRead.replace("SWG_LFLeg0__swing", bone)
 
-if "SWG_LFLeg1__swing" in fileOrigRead:
+if "SWG_LFLeg1__swing" in animRead:
     bone = "S_ShirttailFL2"
-    fileOrigRead = fileOrigRead.replace("SWG_LFLeg1__swing", bone)
+    animRead = animRead.replace("SWG_LFLeg1__swing", bone)
 
-if "SWG_LFLeg2__swing" in fileOrigRead:
+if "SWG_LFLeg2__swing" in animRead:
     bone = "S_ShirttailFL3"
-    fileOrigRead = fileOrigRead.replace("SWG_LFLeg2__swing", bone)
+    animRead = animRead.replace("SWG_LFLeg2__swing", bone)
 
-if "SWG_RFLeg0__swing" in fileOrigRead:
+if "SWG_RFLeg0__swing" in animRead:
     bone = "S_ShirttailFR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RFLeg0__swing", bone)
+    animRead = animRead.replace("SWG_RFLeg0__swing", bone)
 
-if "SWG_RFLeg1__swing" in fileOrigRead:
+if "SWG_RFLeg1__swing" in animRead:
     bone = "S_ShirttailFR2"
-    fileOrigRead = fileOrigRead.replace("SWG_RFLeg1__swing", bone)
+    animRead = animRead.replace("SWG_RFLeg1__swing", bone)
 
-if "SWG_RFLeg2__swing" in fileOrigRead:
+if "SWG_RFLeg2__swing" in animRead:
     bone = "S_ShirttailFR3"
-    fileOrigRead = fileOrigRead.replace("SWG_RFLeg2__swing", bone)
+    animRead = animRead.replace("SWG_RFLeg2__swing", bone)
 
-if "SWG_RBHip0__swing" in fileOrigRead:
+if "SWG_RBHip0__swing" in animRead:
     bone = "S_ShirttailBR1"
-    fileOrigRead = fileOrigRead.replace("SWG_RBHip0__swing", bone)
+    animRead = animRead.replace("SWG_RBHip0__swing", bone)
 
-if "SWG_RBHip1__swing" in fileOrigRead:
+if "SWG_RBHip1__swing" in animRead:
     bone = "S_ShirttailBR2"
-    fileOrigRead = fileOrigRead.replace("SWG_RBHip1__swing", bone)
+    animRead = animRead.replace("SWG_RBHip1__swing", bone)
 
-if "SWG_LBHip0__swing" in fileOrigRead:
+if "SWG_LBHip0__swing" in animRead:
     bone = "S_ShirttailBL1"
-    fileOrigRead = fileOrigRead.replace("SWG_LBHip0__swing", bone)
+    animRead = animRead.replace("SWG_LBHip0__swing", bone)
 
-if "SWG_LBHip1__swing" in fileOrigRead:
+if "SWG_LBHip1__swing" in animRead:
     bone = "S_ShirttailBL2"
-    fileOrigRead = fileOrigRead.replace("SWG_LBHip1__swing", bone)
+    animRead = animRead.replace("SWG_LBHip1__swing", bone)
 
 
 # Accessory
 for match in ("KenJ", "SwordN"):
-    if match in fileOrigRead:
+    if match in animRead:
         bone = "Sword1"
-        fileOrigRead = fileOrigRead.replace(match, bone)
+        animRead = animRead.replace(match, bone)
 
 for match in ("KenModelN", "SwordHeadN"):
-    if match in fileOrigRead:
+    if match in animRead:
         bone = "Sword2"
-        fileOrigRead = fileOrigRead.replace(match, bone)
+        animRead = animRead.replace(match, bone)
 
 for match in ("SayaN", "Saya01N"):
-    if match in fileOrigRead:
+    if match in animRead:
         bone = "Scabbard"
-        fileOrigRead = fileOrigRead.replace(match, bone)
+        animRead = animRead.replace(match, bone)
 
-if "SayaTateN" in fileOrigRead:
+if "SayaTateN" in animRead:
     bone = "ShieldB"
-    fileOrigRead = fileOrigRead.replace("SayaTateN", bone)
+    animRead = animRead.replace("SayaTateN", bone)
 
 for match in ("SayaTukaN", "TsukaN"):
-    if match in fileOrigRead:
+    if match in animRead:
         bone = "Hilt"
-        fileOrigRead = fileOrigRead.replace(match, bone)
+        animRead = animRead.replace(match, bone)
 
-if "SWG_BagA0__swing" in fileOrigRead:
+if "SWG_BagA0__swing" in animRead:
     bone = "queiver"
-    fileOrigRead = fileOrigRead.replace("SWG_BagA0__swing", bone)
+    animRead = animRead.replace("SWG_BagA0__swing", bone)
 
-if "TateN" in fileOrigRead:
+if "TateN" in animRead:
     bone = "Shield"
-    fileOrigRead = fileOrigRead.replace("TateN", bone)
+    animRead = animRead.replace("TateN", bone)
 
-if "SphereN" in fileOrigRead:
+if "SphereN" in animRead:
     bone = "Sphere"
-    fileOrigRead = fileOrigRead.replace("SphereN", bone)
+    animRead = animRead.replace("SphereN", bone)
 
-if "HatN" in fileOrigRead:
+if "HatN" in animRead:
     bone = "Hat"
-    fileOrigRead = fileOrigRead.replace("HatN", bone)
+    animRead = animRead.replace("HatN", bone)
 
 
-if "ShellNb" in fileOrigRead:
+if "ShellNb" in animRead:
     bone = "Shell2"
-    fileOrigRead = fileOrigRead.replace("ShellNb", bone)
+    animRead = animRead.replace("ShellNb", bone)
 
-if "ShellN" in fileOrigRead:
+if "ShellN" in animRead:
     bone = "Shell1"
-    fileOrigRead = fileOrigRead.replace("ShellN", bone)
+    animRead = animRead.replace("ShellN", bone)
 
-if "ShellCenterN" in fileOrigRead:
+if "ShellCenterN" in animRead:
     bone = "Shell"
-    fileOrigRead = fileOrigRead.replace("ShellCenterN", bone)
+    animRead = animRead.replace("ShellCenterN", bone)
 
 # Other
-if "TailNa" in fileOrigRead:
+if "TailNa" in animRead:
     bone = "Tail1"
-    fileOrigRead = fileOrigRead.replace("TailNa", bone)
+    animRead = animRead.replace("TailNa", bone)
 
-if "TailNb" in fileOrigRead:
+if "TailNb" in animRead:
     bone = "Tail2"
-    fileOrigRead = fileOrigRead.replace("TailNb", bone)
+    animRead = animRead.replace("TailNb", bone)
 
-if "TailNc" in fileOrigRead:
+if "TailNc" in animRead:
     bone = "Tail3"
-    fileOrigRead = fileOrigRead.replace("TailNc", bone)
+    animRead = animRead.replace("TailNc", bone)
 
-if "TailNd" in fileOrigRead:
+if "TailNd" in animRead:
     bone = "Tail4"
-    fileOrigRead = fileOrigRead.replace("TailNd", bone)
+    animRead = animRead.replace("TailNd", bone)
 
-if "TailN" in fileOrigRead:
+if "TailN" in animRead:
     bone = "Tail1"
-    fileOrigRead = fileOrigRead.replace("TailN", bone)
+    animRead = animRead.replace("TailN", bone)
 
-if "Tail1N" in fileOrigRead:
+if "Tail1N" in animRead:
     bone = "Tail2"
-    fileOrigRead = fileOrigRead.replace("Tail1N", bone)
+    animRead = animRead.replace("Tail1N", bone)
 
-if "Tail2N" in fileOrigRead:
+if "Tail2N" in animRead:
     bone = "Tail3"
-    fileOrigRead = fileOrigRead.replace("Tail2N", bone)
+    animRead = animRead.replace("Tail2N", bone)
 
-if "HLP_NeckJb" in fileOrigRead:
+if "HLP_NeckJb" in animRead:
     bone = "H_Neck"
-    fileOrigRead = fileOrigRead.replace("HLP_NeckJb", bone)
+    animRead = animRead.replace("HLP_NeckJb", bone)
 
-if "NeckN" in fileOrigRead:
+if "NeckN" in animRead:
     bone = "Neck"
-    fileOrigRead = fileOrigRead.replace("NeckN", bone)
+    animRead = animRead.replace("NeckN", bone)
 
-if "HeadN" in fileOrigRead:
+if "HeadN" in animRead:
     bone = "Head"
-    fileOrigRead = fileOrigRead.replace("HeadN", bone)
+    animRead = animRead.replace("HeadN", bone)
 
-if "RHaveN" in fileOrigRead:
+if "RHaveN" in animRead:
     bone = "HaveR"
-    fileOrigRead = fileOrigRead.replace("RHaveN", bone)
+    animRead = animRead.replace("RHaveN", bone)
 
-if "LHaveN" in fileOrigRead:
+if "LHaveN" in animRead:
     bone = "HaveL"
-    fileOrigRead = fileOrigRead.replace("LHaveN", bone)
+    animRead = animRead.replace("LHaveN", bone)
 
-if "SpineN" in fileOrigRead:
+if "SpineN" in animRead:
     bone = "Spine"
-    fileOrigRead = fileOrigRead.replace("SpineN", bone)
+    animRead = animRead.replace("SpineN", bone)
 
-if "HanaN" in fileOrigRead:
+if "HanaN" in animRead:
     bone = "Snout"
-    fileOrigRead = fileOrigRead.replace("HanaN", bone)
+    animRead = animRead.replace("HanaN", bone)
 
-if "ChinNa" in fileOrigRead:
+if "ChinNa" in animRead:
     bone = "Mouth2"
-    fileOrigRead = fileOrigRead.replace("ChinNa", bone)
+    animRead = animRead.replace("ChinNa", bone)
 
-if "ChinN" in fileOrigRead:
+if "ChinN" in animRead:
     bone = "Mouth1"
-    fileOrigRead = fileOrigRead.replace("ChinN", bone)
+    animRead = animRead.replace("ChinN", bone)
 
-if "CheekN" in fileOrigRead:
+if "CheekN" in animRead:
     bone = "Cheek"
-    fileOrigRead = fileOrigRead.replace("CheekN", bone)
+    animRead = animRead.replace("CheekN", bone)
 
-if "TamagoN" in fileOrigRead:
+if "TamagoN" in animRead:
     bone = "Egg"
-    fileOrigRead = fileOrigRead.replace("TamagoN", bone)
+    animRead = animRead.replace("TamagoN", bone)
 
-if "HLP_KneeLb" in fileOrigRead:
+if "HLP_KneeLb" in animRead:
     bone = "H_KneeL"
-    fileOrigRead = fileOrigRead.replace("HLP_KneeLb", bone)
+    animRead = animRead.replace("HLP_KneeLb", bone)
 
-if "HLP_KneeRb" in fileOrigRead:
+if "HLP_KneeRb" in animRead:
     bone = "H_KneeR"
-    fileOrigRead = fileOrigRead.replace("HLP_KneeRb", bone)
+    animRead = animRead.replace("HLP_KneeRb", bone)
 
-if "HLP_LUpArmTwistjb" in fileOrigRead:
+if "HLP_LUpArmTwistjb" in animRead:
     bone = "H_UparmtwistL"
-    fileOrigRead = fileOrigRead.replace("HLP_LUpArmTwistjb", bone)
+    animRead = animRead.replace("HLP_LUpArmTwistjb", bone)
 
-if "HLP_RUpArmTwistjb" in fileOrigRead:
+if "HLP_RUpArmTwistjb" in animRead:
     bone = "H_UparmtwistR"
-    fileOrigRead = fileOrigRead.replace("HLP_RUpArmTwistjb", bone)
+    animRead = animRead.replace("HLP_RUpArmTwistjb", bone)
 
-if "HLP_LTekubiJb" in fileOrigRead:
+if "HLP_LTekubiJb" in animRead:
     bone = "H_WristL"
-    fileOrigRead = fileOrigRead.replace("HLP_LTekubiJb", bone)
+    animRead = animRead.replace("HLP_LTekubiJb", bone)
 
-if "HLP_RTekubiJb" in fileOrigRead:
+if "HLP_RTekubiJb" in animRead:
     bone = "H_WristR"
-    fileOrigRead = fileOrigRead.replace("HLP_RTekubiJb", bone)
+    animRead = animRead.replace("HLP_RTekubiJb", bone)
 
-if "SWG_SHair1N__swing" in fileOrigRead:
+if "SWG_SHair1N__swing" in animRead:
     bone = "S_HairF1"
-    fileOrigRead = fileOrigRead.replace("SWG_SHair1N__swing", bone)
+    animRead = animRead.replace("SWG_SHair1N__swing", bone)
 
-if "SWG_SHair2N__swing" in fileOrigRead:
+if "SWG_SHair2N__swing" in animRead:
     bone = "S_HairB1"
-    fileOrigRead = fileOrigRead.replace("SWG_SHair2N__swing", bone)
+    animRead = animRead.replace("SWG_SHair2N__swing", bone)
 
-if "HLP_CShellJb" in fileOrigRead:
+if "HLP_CShellJb" in animRead:
     bone = "H_ShellC"
-    fileOrigRead = fileOrigRead.replace("HLP_CShellJb", bone)
+    animRead = animRead.replace("HLP_CShellJb", bone)
 
-if "HLP_LShellJb" in fileOrigRead:
+if "HLP_LShellJb" in animRead:
     bone = "H_ShellL"
-    fileOrigRead = fileOrigRead.replace("HLP_LShellJb", bone)
+    animRead = animRead.replace("HLP_LShellJb", bone)
 
-if "HLP_RShellJb" in fileOrigRead:
+if "HLP_RShellJb" in animRead:
     bone = "H_ShellR"
-    fileOrigRead = fileOrigRead.replace("HLP_RShellJb", bone)
+    animRead = animRead.replace("HLP_RShellJb", bone)
 
-if "JawN" in fileOrigRead:
+if "JawN" in animRead:
     bone = "Jaw"
-    fileOrigRead = fileOrigRead.replace("JawN", bone)
+    animRead = animRead.replace("JawN", bone)
 
-if "HaveN" in fileOrigRead:
+if "HaveN" in animRead:
     bone = "Have"
-    fileOrigRead = fileOrigRead.replace("HaveN", bone)
+    animRead = animRead.replace("HaveN", bone)
 
-if "PipeJA" in fileOrigRead:
+if "PipeJA" in animRead:
     bone = "Pipe1"
-    fileOrigRead = fileOrigRead.replace("PipeJA", bone)
+    animRead = animRead.replace("PipeJA", bone)
 
-if "PipeJB" in fileOrigRead:
+if "PipeJB" in animRead:
     bone = "Pipe2"
-    fileOrigRead = fileOrigRead.replace("PipeJB", bone)
+    animRead = animRead.replace("PipeJB", bone)
 
-if "PipeJC" in fileOrigRead:
+if "PipeJC" in animRead:
     bone = "Pipe3"
-    fileOrigRead = fileOrigRead.replace("PipeJC", bone)
+    animRead = animRead.replace("PipeJC", bone)
 
-if "PipeJD" in fileOrigRead:
+if "PipeJD" in animRead:
     bone = "Pipe4"
-    fileOrigRead = fileOrigRead.replace("PipeJD", bone)
+    animRead = animRead.replace("PipeJD", bone)
 
-if "PipeJE" in fileOrigRead:
+if "PipeJE" in animRead:
     bone = "Pipe5"
-    fileOrigRead = fileOrigRead.replace("PipeJE", bone)
+    animRead = animRead.replace("PipeJE", bone)
 
-if "SWG_TaiNa__swing" in fileOrigRead:
+if "SWG_TaiNa__swing" in animRead:
     bone = "S_Tail1"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNa__swing", bone)
+    animRead = animRead.replace("SWG_TaiNa__swing", bone)
 
-if "SWG_TaiNb__swing" in fileOrigRead:
+if "SWG_TaiNb__swing" in animRead:
     bone = "S_Tail2"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNb__swing", bone)
+    animRead = animRead.replace("SWG_TaiNb__swing", bone)
 
-if "SWG_TaiNc__swing" in fileOrigRead:
+if "SWG_TaiNc__swing" in animRead:
     bone = "S_Tail3"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNc__swing", bone)
+    animRead = animRead.replace("SWG_TaiNc__swing", bone)
 
-if "SWG_TaiNd__swing" in fileOrigRead:
+if "SWG_TaiNd__swing" in animRead:
     bone = "S_Tail4"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNd__swing", bone)
+    animRead = animRead.replace("SWG_TaiNd__swing", bone)
 
-if "SWG_TaiNe__swing" in fileOrigRead:
+if "SWG_TaiNe__swing" in animRead:
     bone = "S_Tail5"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNe__swing", bone)
+    animRead = animRead.replace("SWG_TaiNe__swing", bone)
 
-if "SWG_TaiNf__swing" in fileOrigRead:
+if "SWG_TaiNf__swing" in animRead:
     bone = "S_Tail6"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNf__swing", bone)
+    animRead = animRead.replace("SWG_TaiNf__swing", bone)
 
-if "SWG_TaiNg__swing" in fileOrigRead:
+if "SWG_TaiNg__swing" in animRead:
     bone = "S_Tail7"
-    fileOrigRead = fileOrigRead.replace("SWG_TaiNg__swing", bone)
+    animRead = animRead.replace("SWG_TaiNg__swing", bone)
 
-if "LMimiNb" in fileOrigRead:
+if "LMimiNb" in animRead:
     bone = "EarL2"
-    fileOrigRead = fileOrigRead.replace("LMimiNb", bone)
+    animRead = animRead.replace("LMimiNb", bone)
 
-if "RMimiNb" in fileOrigRead:
+if "RMimiNb" in animRead:
     bone = "EarR2"
-    fileOrigRead = fileOrigRead.replace("RMimiNb", bone)
+    animRead = animRead.replace("RMimiNb", bone)
 
-if "LMimiN" in fileOrigRead:
+if "LMimiN" in animRead:
     bone = "EarL1"
-    fileOrigRead = fileOrigRead.replace("LMimiN", bone)
+    animRead = animRead.replace("LMimiN", bone)
 
-if "RMimiN" in fileOrigRead:
+if "RMimiN" in animRead:
     bone = "EarR1"
-    fileOrigRead = fileOrigRead.replace("RMimiN", bone)
+    animRead = animRead.replace("RMimiN", bone)
 
-if "Sippo1N" in fileOrigRead:
+if "Sippo1N" in animRead:
     bone = "S_Tail1"
-    fileOrigRead = fileOrigRead.replace("Sippo1N", bone)
+    animRead = animRead.replace("Sippo1N", bone)
 
-if "Sippo2N" in fileOrigRead:
+if "Sippo2N" in animRead:
     bone = "S_Tail2"
-    fileOrigRead = fileOrigRead.replace("Sippo2N", bone)
+    animRead = animRead.replace("Sippo2N", bone)
 
-if "Sippo3N" in fileOrigRead:
+if "Sippo3N" in animRead:
     bone = "S_Tail3"
-    fileOrigRead = fileOrigRead.replace("Sippo3N", bone)
+    animRead = animRead.replace("Sippo3N", bone)
 
-if "Sipoo4N" in fileOrigRead:
+if "Sipoo4N" in animRead:
     bone = "S_Tail4"
-    fileOrigRead = fileOrigRead.replace("Sipoo4N", bone)
+    animRead = animRead.replace("Sipoo4N", bone)
 
-if "Sipoo5N" in fileOrigRead:
+if "Sipoo5N" in animRead:
     bone = "S_Tail5"
-    fileOrigRead = fileOrigRead.replace("Sipoo5N", bone)
+    animRead = animRead.replace("Sipoo5N", bone)
 
-if "Sippo6N" in fileOrigRead:
+if "Sippo6N" in animRead:
     bone = "S_Tail6"
-    fileOrigRead = fileOrigRead.replace("Sippo6N", bone)
+    animRead = animRead.replace("Sippo6N", bone)
 
-if "Sippo7N" in fileOrigRead:
+if "Sippo7N" in animRead:
     bone = "S_Tail7"
-    fileOrigRead = fileOrigRead.replace("Sippo7N", bone)
+    animRead = animRead.replace("Sippo7N", bone)
 
-if "Sipoo8N" in fileOrigRead:
+if "Sipoo8N" in animRead:
     bone = "S_Tail8"
-    fileOrigRead = fileOrigRead.replace("Sipoo8N", bone)
+    animRead = animRead.replace("Sipoo8N", bone)
 
-if "Sippo9N" in fileOrigRead:
+if "Sippo9N" in animRead:
     bone = "S_Tail9"
-    fileOrigRead = fileOrigRead.replace("Sippo9N", bone)
+    animRead = animRead.replace("Sippo9N", bone)
 
-if "AgoN" in fileOrigRead:
+if "AgoN" in animRead:
     bone = "Mouth"
-    fileOrigRead = fileOrigRead.replace("AgoN", bone)
+    animRead = animRead.replace("AgoN", bone)
 
-if "JikuN" in fileOrigRead:
+if "JikuN" in animRead:
     bone = "Shaft"
-    fileOrigRead = fileOrigRead.replace("JikuN", bone)
+    animRead = animRead.replace("JikuN", bone)
 
-if "LKataSinN" in fileOrigRead:
+if "LKataSinN" in animRead:
     bone = "ShoulderpadL"
-    fileOrigRead = fileOrigRead.replace("LKataSinN", bone)
+    animRead = animRead.replace("LKataSinN", bone)
 
-if "RKataSinN" in fileOrigRead:
+if "RKataSinN" in animRead:
     bone = "ShoulderpadR"
-    fileOrigRead = fileOrigRead.replace("RKataSinN", bone)
+    animRead = animRead.replace("RKataSinN", bone)
 
 
 # Handle ClavicleC/LegC bone addition
 
-if has_ClavicleC.lower() == "y":
-    bone_count = int(re.findall("(\d+).*\nend\nskeleton", fileOrigRead)[0])
-    bust_index = int(re.findall("(\d+).*Bust", fileOrigRead)[0])
-    clavicleC_index = bone_count + 1
-    fileOrigRead = re.sub("(\"ClavicleR\") \d+", "\\1" + " " + str(clavicleC_index), fileOrigRead, 1)
-    fileOrigRead = re.sub("(\"ClavicleL\") \d+", "\\1" + " " + str(clavicleC_index), fileOrigRead, 1)
-    fileOrigRead = re.sub("(\d+.*)\n(end\nskeleton)", "\\1" + "\n" + str(clavicleC_index) + " \"ClavicleC\" " + str(bust_index) + "\n" + "\\2", fileOrigRead, 1)
-    fileOrigRead = re.sub("(\d+)\ntime", "\\1" + "\n" + str(clavicleC_index) + " 0 0 0 0 0 0\ntime", fileOrigRead)
-    fileOrigRead = re.sub("end\n\Z", str(clavicleC_index) + " 0 0 0 0 0 0\nend\n", fileOrigRead)
+match extension:
+    case '.smd':
+        if has_ClavicleC.lower() == "y":
+            bone_count = int(re.findall("(\d+).*\nend\nskeleton", animRead)[0])
+            bust_index = int(re.findall("(\d+).*Bust", animRead)[0])
+            clavicleC_index = bone_count + 1
+            animRead = re.sub("(\"ClavicleR\") \d+", "\\1" + " " + str(clavicleC_index), animRead, 1)
+            animRead = re.sub("(\"ClavicleL\") \d+", "\\1" + " " + str(clavicleC_index), animRead, 1)
+            animRead = re.sub("(\d+.*)\n(end\nskeleton)", "\\1" + "\n" + str(clavicleC_index) + " \"ClavicleC\" " + str(bust_index) + "\n" + "\\2", animRead, 1)
+            animRead = re.sub("(\d+)\ntime", "\\1" + "\n" + str(clavicleC_index) + " 0 0 0 0 0 0\ntime", animRead)
 
-if has_LegC.lower() == "y":
-    bone_count = int(re.findall("(\d+).*\nend\nskeleton", fileOrigRead)[0])
-    hip_index = int(re.findall("(\d+).*Hip", fileOrigRead)[0])
-    legC_index = bone_count + 1
-    fileOrigRead = re.sub("(\"LegR\") \d+", "\\1" + " " + str(legC_index), fileOrigRead, 1)
-    fileOrigRead = re.sub("(\"LegL\") \d+", "\\1" + " " + str(legC_index), fileOrigRead, 1)
-    fileOrigRead = re.sub("(\d+.*)\n(end\nskeleton)", "\\1" + "\n" + str(legC_index) + " \"LegC\" " + str(hip_index) + "\n" + "\\2", fileOrigRead, 1)
-    fileOrigRead = re.sub("(\d+)\ntime", "\\1" + "\n" + str(legC_index) + " 0 0 0 0 0 0\ntime", fileOrigRead)
-    fileOrigRead = re.sub("end\n\Z", str(legC_index) + " 0 0 0 0 0 0\nend\n", fileOrigRead)
+        if has_LegC.lower() == "y":
+            bone_count = int(re.findall("(\d+).*\nend\nskeleton", animRead)[0])
+            hip_index = int(re.findall("(\d+).*Hip", animRead)[0])
+            legC_index = bone_count + 1
+            animRead = re.sub("(\"LegR\") \d+", "\\1" + " " + str(legC_index), animRead, 1)
+            animRead = re.sub("(\"LegL\") \d+", "\\1" + " " + str(legC_index), animRead, 1)
+            animRead = re.sub("(\d+.*)\n(end\nskeleton)", "\\1" + "\n" + str(legC_index) + " \"LegC\" " + str(hip_index) + "\n" + "\\2", animRead, 1)
+            animRead = re.sub("(\d+)\ntime", "\\1" + "\n" + str(legC_index) + " 0 0 0 0 0 0\ntime", animRead)
 
-with open(filename + '_conv' + extension, 'w') as fileConv:
-    fileConv.write(fileOrigRead)
+# Delete last frame of animation
+match extension:
+    case '.smd':
+        animRead = re.sub("time " + str(len(keyframe_data)) + "\n[\S\s]*?end", "end", animRead, 1)
 
-fileOrig.close()
-fileConv.close()
+if not os.path.exists(os.path.dirname(anims[0]) + '/export'):
+    os.makedirs(os.path.dirname(anims[0]) + '/export')
+
+with open(os.path.dirname(anims[0]) + '/export/anim_conv' + extension, 'w') as animConv:
+    animConv.write(animRead)
+
+anim1.close()
+nextAnim.close()
+animConv.close()
