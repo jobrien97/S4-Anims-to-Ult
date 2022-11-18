@@ -48,6 +48,4 @@ Play the animation back to verify everything has ported correctly.
 
 Go to `File -> Export -> Animation to File` and export the animation in .nuanmb format. Use the default export settings.
 
----
-
 Your ported animation should now be ready for usage ingame!
