@@ -23,6 +23,7 @@ Do the same for each .pac in the list. You should end up with multiple .smd/.ani
 
 >Stick to **one** filetype (.smd/.anim) per animation. Do not mix and match when exporting.
 
+
 ### Using the script
 #### Prep
 Determine whether your character's **Ultimate** boneset contains a ClavicleC and/or LegC bone. Do this by going into StudioSB, loading up your character's model, and viewing their bone tree. Most characters do.
@@ -37,6 +38,8 @@ Input whether or not your character has a LegC bone.
 Input whether or not your character has a ClavicleC bone.
 
 The script will now process the files and create an output file in either .smd or .anim format, depending on the input type. An `export` directory will be created at the input files' location and the output file will be written there, named `anim_conv`.
+
+
 ### Creating a .nuanmb
 #### StudioSB
 Open up StudioSB and load in your character's model.
@@ -46,5 +49,7 @@ Go to `File -> Import -> Animation into Scene` and navigate to your exported `an
 Play the animation back to verify everything has ported correctly.
 
 Go to `File -> Export -> Animation to File` and export the animation in .nuanmb format. Use the default export settings.
+
+
 
 Your ported animation should now be ready for usage ingame!
