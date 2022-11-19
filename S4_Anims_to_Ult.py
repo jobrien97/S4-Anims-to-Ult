@@ -13,6 +13,18 @@ anims = filedialog.askopenfilenames(filetypes=[("Source Animation (.smd)", "*.sm
 if len(anims) == 0:
     quit()
 
+has_LegC = input("Does your character contain a LegC bone? (Y/N): ")
+while has_LegC.lower() not in ("y", "n"):
+    print("Not a valid input.")
+    has_LegC = input("Does your character contain a LegC bone? (Y/N): ")
+has_LegC = has_LegC.lower() == "y"
+
+has_ClavicleC = input("Does your character contain a ClavicleC bone? (Y/N): ")
+while has_ClavicleC.lower() not in ("y", "n"):
+    print("Not a valid input.")
+    has_ClavicleC = input("Does your character contain a ClavicleC bone? (Y/N): ")
+has_ClavicleC = has_ClavicleC.lower() == "y"
+
 filename, extension = os.path.splitext(anims[0])
 
 with open(anims[0], 'r') as anim1:
@@ -30,19 +42,23 @@ match extension:
             for time in range(len(keyframe_data)):
                 animRead = animRead.replace(base_keyframe_data[time], base_keyframe_data[time] + keyframe_data[time], 1)
                 base_keyframe_data[time] += keyframe_data[time]
+            nextAnim.close()
+    case '.anim':
+        for anim in range(1, len(anims)):
+            with open(anims[anim], 'r') as nextAnim:
+                nextAnimRead = nextAnim.read()
+
+            keyframe_data = re.findall("(anim translate.translateX translateX ([\S]*?) 0 0 0;\n[\S\s]*?scaleZ[\S\s]*?\}\n\})", nextAnimRead)
+            keyframe_dict = {}
+            for ele in keyframe_data:
+                keyframe_dict[ele[1]] = ele[0]
+            
+            print(keyframe_dict["RPinky3N"])
+            quit()
     
 
-has_LegC = input("Does your character contain a LegC bone? (Y/N): ")
-while has_LegC.lower() not in ("y", "n"):
-    print("Not a valid input.")
-    has_LegC = input("Does your character contain a LegC bone? (Y/N): ")
 
-has_ClavicleC = input("Does your character contain a ClavicleC bone? (Y/N): ")
-while has_ClavicleC.lower() not in ("y", "n"):
-    print("Not a valid input.")
-    has_ClavicleC = input("Does your character contain a ClavicleC bone? (Y/N): ")
-
-
+# Handle renaming bones to match Ultimate bonesets
 # Trans, Rot, & Hip
 if "TransN" in animRead:
     bone = "Trans"
@@ -1142,10 +1158,9 @@ if "RKataSinN" in animRead:
 
 
 # Handle ClavicleC/LegC bone addition
-
 match extension:
     case '.smd':
-        if has_ClavicleC.lower() == "y":
+        if has_ClavicleC:
             bone_count = int(re.findall("(\d+).*\nend\nskeleton", animRead)[0])
             bust_index = int(re.findall("(\d+).*Bust", animRead)[0])
             clavicleC_index = bone_count + 1
@@ -1154,7 +1169,7 @@ match extension:
             animRead = re.sub("(\d+.*)\n(end\nskeleton)", "\\1" + "\n" + str(clavicleC_index) + " \"ClavicleC\" " + str(bust_index) + "\n" + "\\2", animRead, 1)
             animRead = re.sub("(\d+)\ntime", "\\1" + "\n" + str(clavicleC_index) + " 0 0 0 0 0 0\ntime", animRead)
 
-        if has_LegC.lower() == "y":
+        if has_LegC:
             bone_count = int(re.findall("(\d+).*\nend\nskeleton", animRead)[0])
             hip_index = int(re.findall("(\d+).*Hip", animRead)[0])
             legC_index = bone_count + 1
@@ -1175,5 +1190,4 @@ with open(os.path.dirname(anims[0]) + '/export/anim_conv' + extension, 'w') as a
     animConv.write(animRead)
 
 anim1.close()
-nextAnim.close()
 animConv.close()
