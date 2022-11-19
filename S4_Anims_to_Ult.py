@@ -43,8 +43,10 @@ match extension:
                 animRead = animRead.replace(base_keyframe_data[time], base_keyframe_data[time] + keyframe_data[time], 1)
                 base_keyframe_data[time] += keyframe_data[time]
             nextAnim.close()
+
     case '.anim':
         empty_bone_data = re.findall("anim ([\S]*) 0 0 0;", animRead)
+
         for anim in range(1, len(anims)):
             with open(anims[anim], 'r') as nextAnim:
                 nextAnimRead = nextAnim.read()
@@ -56,6 +58,9 @@ match extension:
             for i in range(len(empty_bone_data)):
                 if empty_bone_data[i] in keyframe_dict:
                     animRead = animRead.replace("anim " + empty_bone_data[i] + " 0 0 0;", keyframe_dict[empty_bone_data[i]], 1)
+        
+        animRead = re.sub("(anim rotate.*\n[\S\s]*?)linear;", "\\1angular;", animRead)
+        animRead = animRead.replace("weighted 1;", "weighted 0;")
     
 
 
@@ -1178,8 +1183,16 @@ match extension:
             animRead = re.sub("(\"LegL\") \d+", "\\1" + " " + str(legC_index), animRead, 1)
             animRead = re.sub("(\d+.*)\n(end\nskeleton)", "\\1" + "\n" + str(legC_index) + " \"LegC\" " + str(hip_index) + "\n" + "\\2", animRead, 1)
             animRead = re.sub("(\d+)\ntime", "\\1" + "\n" + str(legC_index) + " 0 0 0 0 0 0\ntime", animRead)
+    
+    case '.anim':
+        if has_ClavicleC:
+            animRead += "anim translate.translateX translateX ClavicleC 0 1 0;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateY translateY ClavicleC 0 1 1;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateZ translateZ ClavicleC 0 1 2;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateX rotateX ClavicleC 0 1 3;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateY rotateY ClavicleC 0 1 4;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateZ rotateZ ClavicleC 0 1 5;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleX scaleX ClavicleC 0 1 6;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleY scaleY ClavicleC 0 1 7;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleZ scaleZ ClavicleC 0 1 8;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\n"
+        
+        if has_LegC:
+            animRead += "anim translate.translateX translateX LegC 0 1 0;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateY translateY LegC 0 1 1;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateZ translateZ LegC 0 1 2;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateX rotateX LegC 0 1 3;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateY rotateY LegC 0 1 4;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateZ rotateZ LegC 0 1 5;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleX scaleX LegC 0 1 6;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleY scaleY LegC 0 1 7;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleZ scaleZ LegC 0 1 8;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\n"
 
-# Delete last frame of animation
+
+# Delete last frame of animation (.smd only)
 match extension:
     case '.smd':
         animRead = re.sub("time " + str(len(keyframe_data)) + "\n[\S\s]*?end", "end", animRead, 1)
