@@ -44,6 +44,7 @@ match extension:
                 base_keyframe_data[time] += keyframe_data[time]
             nextAnim.close()
     case '.anim':
+        empty_bone_data = re.findall("anim ([\S]*) 0 0 0;", animRead)
         for anim in range(1, len(anims)):
             with open(anims[anim], 'r') as nextAnim:
                 nextAnimRead = nextAnim.read()
@@ -52,9 +53,9 @@ match extension:
             keyframe_dict = {}
             for ele in keyframe_data:
                 keyframe_dict[ele[1]] = ele[0]
-            
-            print(keyframe_dict["RPinky3N"])
-            quit()
+            for i in range(len(empty_bone_data)):
+                if empty_bone_data[i] in keyframe_dict:
+                    animRead = animRead.replace("anim " + empty_bone_data[i] + " 0 0 0;", keyframe_dict[empty_bone_data[i]], 1)
     
 
 
