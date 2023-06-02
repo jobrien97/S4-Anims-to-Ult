@@ -119,6 +119,10 @@ if "LFootJ" in animRead:
     bone = "FootL"
     animRead = animRead.replace("LFootJ", bone)
 
+if "LFootJ2" in animRead:
+    bone = "FootL2"
+    animRead = animRead.replace("LFootJ2", bone)
+
 if "LToeN" in animRead:
     bone = "ToeL"
     animRead = animRead.replace("LToeN", bone)
@@ -155,6 +159,10 @@ if "RKneeJ" in animRead:
 if "RFootJ" in animRead:
     bone = "FootR"
     animRead = animRead.replace("RFootJ", bone)
+
+if "RFootJ2" in animRead:
+    bone = "FootR2"
+    animRead = animRead.replace("RFootJ2", bone)
 
 if "RToeN" in animRead:
     bone = "ToeR"
@@ -778,6 +786,18 @@ if "SWG_HairE1__swing" in animRead:
     bone = "S_HairBL1"
     animRead = animRead.replace("SWG_HairE1__swing", bone)
 
+if "SWG_hair0__swing" in animRead:
+    bone = "S_Hair1"
+    animRead = animRead.replace("SWG_hair0__swing", bone)
+
+if "SWG_hair1__swing" in animRead:
+    bone = "S_Hair2"
+    animRead = animRead.replace("SWG_hair1__swing", bone)
+
+if "SWG_hair2__swing" in animRead:
+    bone = "S_Hair3"
+    animRead = animRead.replace("SWG_hair2__swing", bone)
+
 if "SWG_LMant0__swing" in animRead:
     bone = "S_MantleL1"
     # animRead = animRead.replace("SWG_LMant0__swing", bone)
@@ -866,6 +886,37 @@ if "SWG_LBHip1__swing" in animRead:
     bone = "S_ShirttailBL2"
     animRead = animRead.replace("SWG_LBHip1__swing", bone)
 
+if "SWG_LLeg0__swing" in animRead:
+    bone = "S_LegL1"
+    animRead = animRead.replace("SWG_LLeg0__swing", bone)
+
+if "SWG_RLeg0__swing" in animRead:
+    bone = "S_LegR1"
+    animRead = animRead.replace("SWG_RLeg0__swing", bone)
+
+if "SWG_LHand0__swing" in animRead:
+    bone = "S_HandL1"
+    animRead = animRead.replace("SWG_LHand0__swing", bone)
+
+if "SWG_RHand0__swing" in animRead:
+    bone = "S_HandR1"
+    animRead = animRead.replace("SWG_RHand0__swing", bone)
+
+if "SWG_LFSBust0__swing" in animRead:
+    bone = "S_BusthairFL1"
+    animRead = animRead.replace("SWG_LFSBust0__swing", bone)
+
+if "SWG_LFSBust1__swing" in animRead:
+    bone = "S_BusthairFL2"
+    animRead = animRead.replace("SWG_LFSBust1__swing", bone)
+
+if "SWG_RFSBust0__swing" in animRead:
+    bone = "S_BusthairFR1"
+    animRead = animRead.replace("SWG_RFSBust0__swing", bone)
+
+if "SWG_RFSBust1__swing" in animRead:
+    bone = "S_BusthairFR2"
+    animRead = animRead.replace("SWG_RFSBust1__swing", bone)
 
 # Accessory
 for match in ("KenJ", "SwordN"):
@@ -1162,6 +1213,42 @@ if "RKataSinN" in animRead:
     bone = "ShoulderpadR"
     animRead = animRead.replace("RKataSinN", bone)
 
+if "WingbaseN" in animRead:
+    bone = "Wingbase"
+    animRead = animRead.replace("WingbaseN", bone)
+
+if "LWingJa" in animRead:
+    bone = "WingL1"
+    animRead = animRead.replace("LWingJa", bone)
+
+if "LWingJb" in animRead:
+    bone = "WingL2"
+    animRead = animRead.replace("LWingJb", bone)
+
+if "LWingJc" in animRead:
+    bone = "WingL3"
+    animRead = animRead.replace("LWingJc", bone)
+
+if "LWingJd" in animRead:
+    bone = "WingL4"
+    animRead = animRead.replace("LWingJd", bone)
+
+if "RWingJa" in animRead:
+    bone = "WingR1"
+    animRead = animRead.replace("RWingJa", bone)
+
+if "RWingJb" in animRead:
+    bone = "WingR2"
+    animRead = animRead.replace("RWingJb", bone)
+
+if "RWingJc" in animRead:
+    bone = "WingR3"
+    animRead = animRead.replace("RWingJc", bone)
+
+if "RWingJd" in animRead:
+    bone = "WingR4"
+    animRead = animRead.replace("RWingJd", bone)
+
 
 # Handle ClavicleC/LegC bone addition
 match extension:
@@ -1191,6 +1278,8 @@ match extension:
         if has_LegC:
             animRead += "anim translate.translateX translateX LegC 0 1 0;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateY translateY LegC 0 1 1;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateZ translateZ LegC 0 1 2;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateX rotateX LegC 0 1 3;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateY rotateY LegC 0 1 4;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateZ rotateZ LegC 0 1 5;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleX scaleX LegC 0 1 6;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleY scaleY LegC 0 1 7;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleZ scaleZ LegC 0 1 8;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\n"
 
+        # For Bayo
+        animRead += "anim translate.translateX translateX Busthair 0 1 0;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateY translateY Busthair 0 1 1;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim translate.translateZ translateZ Busthair 0 1 2;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateX rotateX Busthair 0 1 3;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateY rotateY Busthair 0 1 4;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim rotate.rotateZ rotateZ Busthair 0 1 5;\nanimData {\n input time;\n output angular;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 0.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleX scaleX Busthair 0 1 6;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleY scaleY Busthair 0 1 7;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\nanim scale.scaleZ scaleZ Busthair 0 1 8;\nanimData {\n input time;\n output linear;\n weighted 0;\n preInfinity constant;\n postInfinity constant;\n keys {\n 1 1.000000 linear linear 1 1 0;\n }\n}\n"
 
 # Delete last frame of animation (.smd only)
 match extension:
